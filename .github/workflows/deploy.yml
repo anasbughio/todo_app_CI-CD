@@ -1,4 +1,4 @@
-name: CI-CD-Deploy
+name: Build and Deploy MERN Todo App
 
 on:
   push:
@@ -10,29 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker Image
-        run: docker build -t anasbughio/mern-todo:latest .
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-todo:latest .
 
-      - name: Push Docker Image
-        run: docker push anasbughio/mern-todo:latest
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/mern-todo:latest
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           script: |
-            docker pull anasbughio/mern-todo:latest
+            echo "Stopping old container..."
             docker stop mern-app || true
             docker rm mern-app || true
-            docker run -d --name mern-app -p 80:5000 anasbughio/mern-todo:latest
+            echo "Running new container..."
+            docker run -d --name mern-app -p 80:5000 \
+            -e MONGO_URI='${{ secrets.MONGO_URI }}' \
+            ${{ secrets.DOCKER_USERNAME }}/mern-todo:latest
