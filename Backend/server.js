@@ -10,7 +10,11 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors({ origin: "*" }));
+app.use(cors({
+  origin: 'http://mern-todo-frontend.s3-website-us-east-1.amazonaws.com', // frontend URL
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use('/api/todos',todoRoutes);

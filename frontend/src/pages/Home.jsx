@@ -13,8 +13,8 @@ const [editingText, setEditingText] = useState("");
 
 useEffect(()=>{
     axios.get('/todos').then((res)=>{
-        const data = Array.isArray(res.data) ? res.data : (res.data.todos || []);
-        setTodos(data);
+      
+        setTodos(res.data);
     }).catch((err)=>{
         console.error("Error fetching todos:", err);
          setTodos([]);
@@ -65,7 +65,7 @@ onChange={(e)=> setTask(e.target.value) }
 
 
 <ul>
-    {Array.isArray(todos) && todos.map((todo)=>(
+    {todos.map((todo)=>(
         
        <li key={todo._id}>
         {editingId === todo._id ?(
