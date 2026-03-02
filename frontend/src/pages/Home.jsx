@@ -61,7 +61,7 @@ onChange={(e)=> setTask(e.target.value) }
 
 
 <ul>
-    {todos.map((todo)=>(
+    {Array.isArray(todos) && todos.map((todo)=>(
         
        <li key={todo._id}>
         {editingId === todo._id ?(
