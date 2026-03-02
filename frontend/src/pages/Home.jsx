@@ -53,10 +53,10 @@ const handleUpdate = async(id)=>{
 <input 
 type="text"
 value={task}
-placeholder="Enter your task"
+placeholder="Enter task"
 onChange={(e)=> setTask(e.target.value) }
 />
-<button type="submit">Add</button>
+<button type="submit">Add Todo</button>
 </form>
 
 
