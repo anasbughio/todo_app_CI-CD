@@ -60,7 +60,7 @@ value={task}
 placeholder="Enter task"
 onChange={(e)=> setTask(e.target.value) }
 />
-<button type="submit">Anas</button>
+<button type="submit">Add</button>
 </form>
 
 
