@@ -1,4 +1,4 @@
-name: CI/CD - MERN Todo App
+name: Build and Deploy MERN Todo App
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -20,27 +20,26 @@ jobs:
         with:
           node-version: 18
 
-      # 3️⃣ Install frontend dependencies and build
+      # 3️⃣ Build Frontend
       - name: Build Frontend
         working-directory: ./frontend
         run: |
-          npm ci
+          npm install
           npm run build
 
-      # 4️⃣ Deploy frontend to S3
+      # 4️⃣ Deploy Frontend to S3
       - name: Deploy Frontend to S3
-        uses: aws-actions/s3-sync@v2
+        uses: jakejarvis/s3-sync-action@v0.5.1
         with:
-          source_dir: ./frontend/build
-          dest_dir: /
-          bucket: ${{ secrets.S3_BUCKET_NAME }}
-          delete: true
+          args: --delete
         env:
-          AWS_REGION: us-east-1
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+          SOURCE_DIR: ./frontend/build
 
-      # 5️⃣ Set up Docker Buildx for backend
+      # 5️⃣ Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -51,17 +50,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 7️⃣ Build backend Docker image
+      # 7️⃣ Build Docker image for backend
       - name: Build Backend Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-todo:latest .
 
-      # 8️⃣ Push backend Docker image to Docker Hub
+      # 8️⃣ Push Docker image to Docker Hub
       - name: Push Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-todo:latest
 
-      # 9️⃣ Deploy backend to EC2
+      # 9️⃣ Deploy Backend to EC2
       - name: Deploy Backend to EC2
         uses: appleboy/ssh-action@v0.1.8
         with:
