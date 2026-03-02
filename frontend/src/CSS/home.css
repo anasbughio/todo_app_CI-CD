@@ -1,6 +1,5 @@
 .body{
-    /* background: linear-gradient(to right, #0f2027, #203a43, #2c5364); */
-    background: #fff;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
     width: 100vw;
     height: 100vh;   
 }
@@ -54,8 +53,7 @@
 }
 
 .todo-form button:hover {
-  /* background-color: #0199b5; */
-  background-color: #fff;
+  background-color: #0199b5;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
 }
