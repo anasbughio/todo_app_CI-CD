@@ -13,7 +13,8 @@ const [editingText, setEditingText] = useState("");
 
 useEffect(()=>{
     axios.get('/todos').then((res)=>{
-        setTodos(res.data);
+        const data = Array.isArray(res.data) ? res.data : (res.data.todos || []);
+        setTodos(data);
     })
 },[]);
 
