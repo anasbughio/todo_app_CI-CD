@@ -15,7 +15,10 @@ useEffect(()=>{
     axios.get('/todos').then((res)=>{
         const data = Array.isArray(res.data) ? res.data : (res.data.todos || []);
         setTodos(data);
-    })
+    }).catch((err)=>{
+        console.error("Error fetching todos:", err);
+         setTodos([]);
+    });
 },[]);
 
 const addTodo = async(e)=>{
